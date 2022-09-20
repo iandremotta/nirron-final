@@ -1,0 +1,87 @@
+{# templates/login/index.html.twig #}
+{% extends 'admin.html.twig' %}
+
+
+{% block body %}
+	<div class="form-row d-flex justify-content-between">
+		{{ knp_pagination_filter(solicitacoes, {'u.titulo': 'titulo'} ) }}
+		{% if 'SOLICITANTE' in app.user.roles[0] or 'APROVADOR' in app.user.roles[0] %}
+			<div class="d-flex justify-content-end">
+				<a href="{{ path('app_solicitacao_new') }}" class="btn btn-default" style="color:#ac8529;">Adicionar novo
+				</a>
+			</div>
+		{% endif  %}
+	</div>
+
+
+	<div class="row">
+		<div class="col-xl-12">
+			<div class="table-responsive">
+				<table id="example2" class="table card-table display dataTablesCard">
+					<thead>
+						<tr>
+							{% if 'APROVADOR' in app.user.roles[0] %}
+								<th>Solicitante</th>
+							{% endif %}
+							<th>{{ knp_pagination_sortable(solicitacoes, 'Título', 'u.titulo') }}</th>
+							{% if 'SOLICITANTE' in app.user.roles[0] or  'SUPER' in app.user.roles[0] %}
+								<th>{{ knp_pagination_sortable(solicitacoes, 'Tipo', 'u.tipo') }}</th>
+							{% endif %}
+							<th>{{ knp_pagination_sortable(solicitacoes, 'Valor', 'u.valor') }}</th>
+							<th>{{ knp_pagination_sortable(solicitacoes, 'Criado em', 'u.createdAt') }}</th>
+							<th>{{ knp_pagination_sortable(solicitacoes, 'Vencimento', 'u.vencimento') }}</th>
+							<th>{{ knp_pagination_sortable(solicitacoes, 'Status', 'u.status') }}</th>
+							<th></th>
+						</tr>
+					</thead>
+				</tr>
+			</thead>
+		</tr>
+	</thead>
+	<tbody>
+		{% for solicitacao in solicitacoes %}
+			<tr>
+				{% if 'APROVADOR' in app.user.roles[0] %}
+					<td>{{solicitacao.usuario.nome}}</td>
+				{% endif %}
+				<td>{{ solicitacao.titulo }}</td>
+				{% if 'SOLICITANTE' in app.user.roles[0] or  'SUPER' in app.user.roles[0] %}
+
+					<td>
+						{% if solicitacao.tipo == 1 %}
+							Administrativo
+						{% else %}
+							Operacional
+						{% endif %}
+					</td>
+				{% endif %}
+				<td>R${{ solicitacao.valor|number_format(2, ',', '.') }}</td>
+				<td>{{ solicitacao.createdAt|date('d/m/Y') }}</td>
+				<td>{{ solicitacao.vencimento ? solicitacao.vencimento|date('d/m/Y') : '' }}</td>
+				{% if solicitacao.status == 1 %}
+					<td>Pendente</td>
+				{% endif %}
+				{% if solicitacao.status == 2 %}
+					<td>Recusado</td>
+				{% endif %}
+				{% if solicitacao.status == 3 %}
+					<td>Pré-Aprovado</td>
+				{% endif %}
+				{% if solicitacao.status == 4 %}
+					<td>Recusado</td>
+				{% endif %}
+				{% if solicitacao.status == 5 %}
+					<td>Aprovado</td>
+				{% endif %}
+				<td>
+					<a href="{{ path('app_solicitacao_show', {'id': solicitacao.id}) }}">ver</a>
+					{% if '/solicitacao/'  in  app.request.pathinfo and solicitacao.status == 1  %}
+						|
+						<a href="{{ path('app_solicitacao_edit', {'id': solicitacao.id}) }}">editar</a>
+					{% endif %}
+				</td>
+			</tr>
+		</td>
+	</tbody>
+</tr></tr>{% else %}<tr>
+<td colspan="11">Nenhuma solicitação foi encontrada.</td></tr>{% endfor %}</tbody></tbody></tr></tbody></tbody></table><hr><div class="navigation">{{ knp_pagination_render(solicitacoes) }}</div></div> </div></div>{% endblock %}

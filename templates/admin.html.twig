@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width,initial-scale=1">
+		<title>
+			Nirron -
+			{{nav_active}}
+		</title>
+		<!-- Favicon icon -->
+		<link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/nirron/favicon.png') }}">
+		<link rel="stylesheet" href="{{ asset('vendor/chartist/css/chartist.min.css') }}">
+		<link href="{{ asset('vendor/bootstrap-select/css/bootstrap-select.min.css') }}" rel="stylesheet">
+		<link href="{{ asset('vendor/owl-carousel/owl.carousel.css') }}" rel="stylesheet">
+		<link href="{{ asset('css/style.css') }}" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&family=Roboto:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+	</head>
+	<body>
+
+		<!--*******************
+																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																		    Preloader start
+																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																		********************-->
+		<div id="preloader">
+			<div class="sk-three-bounce">
+				<div class="sk-child sk-bounce1"></div>
+				<div class="sk-child sk-bounce2"></div>
+				<div class="sk-child sk-bounce3"></div>
+			</div>
+		</div>
+		<!--*******************
+																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																		    Preloader end
+																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																		********************-->
+
+		<!--**********************************
+																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																		    Main wrapper start
+																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																		***********************************-->
+		<div
+			id="main-wrapper">
+
+			<!--**********************************
+																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																			        Nav header start
+																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																			    ***********************************-->
+			<div class="nav-header">
+				<a href="{{ path('app_login_success') }}" class="brand-logo">
+					<img class="logo-abbr" src="{{ asset('images/nirron/nirron-brand.png')}}" alt="">
+					<img class="logo-compact" src="{{ asset('images/nirron/nirron-text.jpg')}}" alt="">
+					<img class="brand-title" src="{{ asset('images/nirron/nirron-text.jpg')}}" alt="">
+				</a>
+
+				<div class="nav-control">
+					<div class="hamburger">
+						<span class="line"></span>
+						<span class="line"></span>
+						<span class="line"></span>
+					</div>
+				</div>
+			</div>
+			<!--**********************************
+																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																			        Nav header end
+																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																			    ***********************************-->
+
+			<!--**********************************
+																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																			        Chat box start
+																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																			    ***********************************-->
+			<div class="chatbox">
+				<div class="chatbox-close"></div>
+				<div class="custom-tab-1">
+					<ul class="nav nav-tabs">
+						<li class="nav-item">
+							<a class="nav-link" data-toggle="tab" href="#notes">Notes</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" data-toggle="tab" href="#alerts">Alerts</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link active" data-toggle="tab" href="#chat">Chat</a>
+						</li>
+					</ul>
+
+				</div>
+			</div>
+
+			<div class="header">
+				<div class="header-content">
+					<nav class="navbar navbar-expand">
+						<div class="collapse navbar-collapse justify-content-between">
+							<div class="header-left">
+								<div class="dashboard_bar">
+									Dashboard
+								</div>
+							</div>
+							<div class="navbar-nav header-right">
+								<div class="nav-item dropdown header-profile">
+									<a href="{{path('app_logout')}}" class="dropdown-item ai-icon">
+										<svg id="icon-logout" xmlns="http://www.w3.org/2000/svg" class="text-danger" width="18" height="18" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+											<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+											<polyline points="16 17 21 12 16 7"></polyline>
+											<line x1="21" y1="12" x2="9" y2="12"></line>
+										</svg>
+										<span class="ml-2">Logout
+										</span>
+									</a>
+								</div>
+							</div>
+						</div>
+					</nav>
+				</div>
+			</div>
+
+			<div class="deznav">
+				<div class="deznav-scroll">
+					{% if 'SOLICITANTE' in app.user.roles[0] %}
+						<a href="{{path('app_solicitacao_new')}}" class="add-menu-sidebar">+Nova solicitação</a>
+					{% elseif 'APROVADOR' in app.user.roles[0] %}
+						<a href="#" class="add-menu-sidebar">Aprovador</a>
+					{% elseif 'ADMINISTRADOR' in app.user.roles[0] %}
+						<a href="#" class="add-menu-sidebar">Administrador</a>
+					{% elseif 'FINANCEIRO' in app.user.roles[0] %}
+						<a href="#" class="add-menu-sidebar">Financeiro</a>
+					{% else %}
+						<a href="#" class="add-menu-sidebar">Super</a>
+
+					{% endif %}
+					<ul class="metismenu" id="menu">
+						{% if 'APROVADOR_ADMINISTRATIVO' in app.user.roles[0] %}
+							<li>
+								<a href="{{path('app_aprovador_administrativo_pendentes')}}" aria-expanded="false">
+									<i class="flaticon-381-box-1"></i>
+									<span class="nav-text">Administrativo</span>
+								</a>
+							</li>
+						{% endif %}
+						{% if 'APROVADOR_OPERACIONAL' in app.user.roles[0] %}
+							<li>
+								<a href="{{path('app_aprovador_operacional_pendentes')}}" aria-expanded="false">
+									<i class="flaticon-381-box-1"></i>
+									<span class="nav-text">Operacional</span>
+								</a>
+							</li>
+						{% endif %}
+						{% if 'APROVADOR' in app.user.roles[0] or 'SOLICITANTE' in app.user.roles[0] %}
+							<li>
+								<a href="{{path('app_solicitacao_index')}}" aria-expanded="false">
+									<i class="flaticon-381-compass-2"></i>
+									<span class="nav-text">Solicitações</span>
+								</a>
+							</li>
+						{% endif %}
+						{% if 'ADMINISTRADOR_ASSESSORIA' in app.user.roles[0]  or 'SUPER' in app.user.roles[0] %}
+							<li>
+								<a href="{{path('app_administrador_assessoria_pre_aprovados')}}" aria-expanded="false">
+									<i class="flaticon-381-user-1"></i>
+									<span class="nav-text">Assessoria</span>
+								</a>
+							</li>
+						{% endif %}
+						{% if 'ADMINISTRADOR_LOGISTICA' in app.user.roles[0]  or 'SUPER' in app.user.roles[0] %}
+							<li>
+								<a href="{{path('app_administrador_logistica_pre_aprovados')}}" aria-expanded="false">
+									<i class="flaticon-381-stopclock"></i>
+									<span class="nav-text">Logística</span>
+								</a>
+							</li>
+						{% endif %}
+						{% if 'FINANCEIRO' in app.user.roles[0]%}
+							<li>
+								<a href="{{ 'FINANCEIRO_ASSESSORIA' in app.user.roles[0] ? path('app_financeiro_assessoria_semana') : path('app_financeiro_logistica_semana')}}" aria-expanded="false">
+									<i class="flaticon-381-archive"></i>
+									<span class="nav-text">Financeiro</span>
+								</a>
+							</li>
+						{% endif %}
+						{% if 'ROLE_SUPER' in app.user.roles %}
+							<li>
+								<a href="{{path('app_user_index')}}" aria-expanded="false">
+									<i class="flaticon-381-settings-6"></i>
+									<span class="nav-text">Usuários</span>
+								</a>
+							</li>
+						{% endif %}
+					</ul>
+					<div class="copyright">
+						<p>
+							<strong>Nirron</strong>
+							©
+							<span class="ano"></span>
+							Todos os direitos reservados</p>
+					</div>
+				</div>
+			</div>
+			Content body start
+																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																								    ***********************************-->
+			<div
+				class="content-body">
+				<!-- row -->
+				<div
+					class="container-fluid">
+					<!-- Add Order -->
+
+					<div class="page-titles">
+						<ol class="breadcrumb">
+							<li class="breadcrumb-item">
+								<a href="javascript:void(0)">Nirron</a>
+							</li>
+							<li class="breadcrumb-item active">
+								<a href="javascript:void(0)">{{nav_active}}</a>
+							</li>
+						</ol>
+					</div>
+					<!-- inserir row -->
+					{% for message in app.flashes('success') %}
+						<div class="alert alert-success">
+							{{message}}
+						</div>
+					{% endfor %}
+					{% block body %}{% endblock %}
+				</div>
+			</div>
+			<!--**********************************
+																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																								        Content body end
+																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																								    ***********************************-->
+			<!--**********************************
+																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																								        Footer start
+																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																								    ***********************************-->
+			<div class="footer">
+				<div class="copyright">
+					<p>Copyright © Designed &amp; Developed by
+						<a href="https://wa.me/5512996793596">André Motta</a>
+					</p>
+				</div>
+			</div>
+			<!--**********************************
+																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																								        Footer end
+																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																								    ***********************************-->
+
+		<!--**********************************
+																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																							       Support ticket button start
+																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																							    ***********************************-->
+
+			<!--**********************************
+																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																								       Support ticket button end
+																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																								    ***********************************-->
+
+
+		</div>
+		<!--**********************************
+																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																							    Main wrapper end
+																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																							***********************************-->
+
+		<!--**********************************
+																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																							    Scripts
+																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																							***********************************-->
+		<!-- Required vendors --><script src="{{ asset('vendor/jquery/jquery.min.js') }}"> </script>
+		<script src="{{ asset('vendor/global/global.min.js') }}"></script>
+		<script src="{{ asset('vendor/bootstrap-select/js/bootstrap-select.min.js') }}"></script>
+		<script src="{{ asset('vendor/chart.js/Chart.bundle.min.js') }}"></script>
+		<script src="{{ asset('js/custom.min.js') }}"></script>
+		<script src="{{ asset('js/deznav-init.js') }}"></script>
+		<script src="{{ asset('vendor/owl-carousel/owl.carousel.js') }}"></script>
+
+		<!-- Chart piety plugin files -->
+		<script src="{{ asset('vendor/peity/jquery.peity.min.js') }}"></script>
+
+		<!-- Apex Chart -->
+		<script src="{{ asset('vendor/apexchart/apexchart.js') }}"></script>
+		<script src="{{ asset('js/jquery.mask.js') }}"></script>
+
+		<!-- Dashboard 1 -->
+		<script src="{{ asset('js/dashboard/dashboard-1.js') }}"></script>
+
+		<script>
+			const d = new Date();
+let year = d.getFullYear();
+$(".ano").text(year);
+
+function carouselReview() { /*  event-bx one function by = owl.carousel.js */
+jQuery('.event-bx').owlCarousel({
+loop: true,
+margin: 30,
+nav: true,
+center: true,
+autoplaySpeed: 3000,
+navSpeed: 3000,
+paginationSpeed: 3000,
+slideSpeed: 3000,
+smartSpeed: 3000,
+autoplay: false,
+navText: [
+'<i class="fa fa-caret-left" aria-hidden="true"></i>', '<i class="fa fa-caret-right" aria-hidden="true"></i>'
+],
+dots: true,
+responsive: {
+0: {
+items: 1
+},
+720: {
+items: 2
+},
+
+1150: {
+items: 3
+},
+
+1200: {
+items: 2
+},
+1749: {
+items: 3
+}
+}
+})
+}
+
+jQuery(window).on('load', function () {
+setTimeout(function () {
+carouselReview();
+}, 1000);
+});
+		</script>
+	</body>
+</html></body></html></body></html></body></html>

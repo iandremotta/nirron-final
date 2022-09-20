@@ -1,0 +1,11 @@
+{% if user.isActive != 1%}
+	<form method="post" action="{{ path('app_user_active', {'id': user.id}) }}" onsubmit="return confirm('Você tem certeza que deseja ativar esse usuário?');">
+		<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
+		<button class="btn" style="color:#55a38b">Ativar</button>
+	</form>
+{% else %}
+	<form method="post" action="{{ path('app_user_inactive', {'id': user.id}) }}" onsubmit="return confirm('Você tem certeza que deseja inativar esse usuário?');">
+		<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
+		<button class="btn" style="color:#EE3232">Desativar</button>
+	</form>
+{% endif %}

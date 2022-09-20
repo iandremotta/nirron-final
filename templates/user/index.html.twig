@@ -1,0 +1,63 @@
+{# templates/login/index.html.twig #}
+{% extends 'admin.html.twig' %}
+
+
+{% block body %}
+	<div class="form-row d-flex justify-content-between">
+		{{ knp_pagination_filter(users, {'u.nome': 'nome'} ) }}
+		<form action="{{path('app_configuracoes')}}" method="post" class="col-xl-6">
+			<div class="input-group mb-3">
+				<input value="{{ configuracoes != null ? configuracoes.path : ''}}" name="path" placeholder="" type="text" class="form-control">
+				<div class="input-group-append">
+					<button class="btn btn-primary" type="submit">
+						Path
+						{#{{ options.button }}{#}
+					</button>
+				</div>
+			</div>
+		</form>
+
+		<a href="{{ path('app_user_new') }}" class="btn btn-default" style="color:#ac8529;">Adicionar novo
+		</a>
+	</div>
+
+	<div class="row">
+		<div class="col-xl-12">
+			<div class="table-responsive">
+				<table id="example2" class="table card-table display dataTablesCard">
+					<thead>
+						<tr>
+							<th>{{ knp_pagination_sortable(users, 'Nome', 'u.nome') }}</th>
+							<th>{{ knp_pagination_sortable(users, 'Username', 'u.username') }}</th>
+							<th>Roles</th>
+							<th>{{ knp_pagination_sortable(users, 'Ativo?', 'u.isActive') }}</th>
+							<th></th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for user in users %}
+							<tr>
+								<td>{{ user.nome }}</td>
+								<td>{{ user.username }}</td>
+								<td>{{ user.roles ? user.roles|json_encode : '' }}</td>
+								{% if user.isActive() != 1%}
+									<td>Inativo</td>
+								{% else %}
+									<td>Ativo</td>
+								{% endif %}
+								<td>
+									<a href="{{ path('app_user_edit', {'id': user.id}) }}">editar</a>
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</tbody>
+			</table>
+			<hr>
+			<div class="navigation">
+				{{ knp_pagination_render(users) }}
+			</div>
+		</div>
+	</div>
+</div>{% endblock %}

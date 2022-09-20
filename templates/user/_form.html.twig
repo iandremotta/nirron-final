@@ -1,0 +1,16 @@
+{{ form_start(form) }}
+<div class="form-group col-md-6">
+	{{ form_row(form.nome) }}
+</div>
+<div class="form-group col-md-6">
+	{{ form_row(form.username) }}
+</div>
+<div class="form-group col-md-6">
+	{{ form_row(form.password) }}
+</div>
+<div class="form-group col-md-6">
+	{{ form_row(form.Roles) }}
+</div>
+
+<button class="btn" style="color:#ac8529">{{ button_label|default('Salvar') }}</button>
+{{ form_end(form) }}

@@ -1,0 +1,32 @@
+{% extends 'admin.html.twig' %}
+
+{% block heading %}Perfil
+{% endblock %}
+
+{% block body %}
+	<div class="row">
+		<div class="col-xl-12 col-lg-12">
+			<div class="card">
+				<div class="card-header">
+					<h4 class="card-title">Atualize sua solicitação</h4>
+				</div>
+				<div class="card-body">
+					<div class="basic-form">
+						<form method="post" enctype="multipart/form-data">
+							<div class="form-row">
+								{{ include('solicitacao/_form.html.twig', {'button_label': 'Atualizar'}) }}
+								<a href="{{ path('app_solicitacao_index') }}" class="btn">Voltar</a>
+								{{ include('solicitacao/_delete_form.html.twig') }}
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="">
+		<embed
+		src="{{ vich_uploader_asset(solicitacao) }}" width="100%" height="750px" type="application/pdf">
+	{# <img alt="{{ solicitacao.titulo }}"> #}
+	</div>
+{% endblock %}

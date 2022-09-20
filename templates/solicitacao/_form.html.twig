@@ -1,0 +1,56 @@
+<style>
+	#solicitacao_imageFile_file {
+		display: inline-block;
+		width: 100%;
+		padding: 120px 0 0;
+		height: 100px;
+		overflow: hidden;
+		-webkit-box-sizing: border-box;
+		-moz-box-sizing: border-box;
+		box-sizing: border-box;
+		background: url('https://cdn1.iconfinder.com/data/icons/hawcons/32/698394-icon-130-cloud-upload-512.png') center center no-repeat #e4e4e4;
+		border-radius: 20px;
+		background-size: 60px 60px;
+	}
+</style>
+
+{{ form_start(form) }}
+<div class="form-group col-md-6">
+	{{ form_row(form.titulo) }}
+</div>
+<div class="form-group col-md-6">
+	{{ form_row(form.empresa) }}
+</div>
+<div class="form-group col-md-6">
+	{{ form_row(form.tipo) }}
+</div>
+<div class="form-group col-md-6">
+	{{ form_row(form.notaFiscal) }}
+</div>
+<div class="form-group col-md-6">
+	{{ form_row(form.valor) }}
+</div>
+<div class="form-group col-md-6">
+	{{ form_row(form.vencimento) }}
+</div>
+<div class="form-group col-md-12">
+	{{ form_row(form.justificativa) }}
+</div>
+<div class="form-group col-md-12">
+	{{ form_row(form.imageFile) }}
+</div>
+
+
+<button class="btn" style="color:#ac8529">{{ button_label|default('Salvar') }}</button>
+{{ form_end(form) }}
+
+<script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
+<script>
+
+	$(document).ready(function () {
+$('#solicitacao_imageFile_file').on('change', () => { // to get the selected value
+$('#solicitacao_imageFile_file').css({'background': 'url(https://cdn1.iconfinder.com/data/icons/hawcons/32/698394-icon-130-cloud-upload-512.png) center center no-repeat #ac8529 ', 'width': '100%', 'background-size': '60px 60px'});
+// ($('#solicitacao_imageFile_file').get(0).files.length)
+});
+});
+</script>

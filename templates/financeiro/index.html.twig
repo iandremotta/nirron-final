@@ -1,0 +1,114 @@
+{# templates/login/index.html.twig #}
+{% extends 'admin.html.twig' %}
+
+
+{% block body %}
+	{% for message in app.flashes('error') %}
+		<div class="alert alert-primary">
+			{{ message }}
+		</div>
+	{% endfor %}
+	<div class="form-row d-flex justify-content-between">
+		{{ knp_pagination_filter(solicitacoes, {'u.titulo': 'titulo'} ) }}
+		<div class="dropdown custom-dropdown">
+			<button type="button" class="btn btn-sm btn-outline-primary" data-toggle="dropdown">Período
+				<i class="fa fa-angle-down ml-4"></i>
+			</button>
+			<div class="dropdown-menu dropdown-menu-right">
+				<a class="dropdown-item" href="{{ 'FINANCEIRO_ASSESSORIA' in app.user.roles[0] ? path('app_financeiro_assessoria_semana') : path('app_financeiro_logistica_semana')}}">Semana</a>
+				<a class="dropdown-item" href="{{ 'FINANCEIRO_ASSESSORIA' in app.user.roles[0] ? path('app_financeiro_assessoria_hoje') : path('app_financeiro_logistica_hoje')}}">Hoje</a>
+				<a class="dropdown-item" href="{{ 'FINANCEIRO_ASSESSORIA' in app.user.roles[0] ? path('app_financeiro_assessoria_todos') : path('app_financeiro_logistica_todos')}}">Todos</a>
+			</div>
+		</div>
+
+		{% if 'FINANCEIRO' in app.user.roles[0] %}
+			<div class="">
+				<form action="{{ 'FINANCEIRO_ASSESSORIA' in app.user.roles[0] ? path('app_assessoria_download') : path('app_logistica_download')}}" method="post">
+					<div class="input-group mb-3">
+						<input type="text" id="path" name="path" class="form-control">
+						<div class="input-group-append">
+							<button class="btn btn-primary" type="submit">Boleto</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		{% endif  %}
+	</div>
+	<div class="row">
+		<div class="col-xl-12">
+			<div class="table-responsive">
+				<table id="example2" class="table card-table display dataTablesCard">
+					<thead>
+						<tr>
+							{% if 'APROVADOR' in app.user.roles[0] %}
+								<th>Solicitante</th>
+							{% endif %}
+							<th>Titulo</th>
+							{% if 'SOLICITANTE' in app.user.roles[0] or  'SUPER' in app.user.roles[0] %}
+								<th>Tipo</th>
+							{% endif %}
+							<th>NotaFiscal</th>
+							<th>{{ knp_pagination_sortable(solicitacoes, 'valor', 'u.valor') }}</th>
+							<th>{{ knp_pagination_sortable(solicitacoes, 'vencimento', 'u.vencimento') }}</th>
+							<th>Status</th>
+							<th></th>
+						</tr>
+					</thead>
+				</tr>
+			</thead>
+		</tr>
+	</thead>
+	<tbody>
+		{% for solicitacao in solicitacoes %}
+			<tr>
+				{% if 'APROVADOR' in app.user.roles[0] %}
+					<td>{{solicitacao.usuario.nome}}</td>
+				{% endif %}
+				<td>{{ solicitacao.titulo }}</td>
+				{% if 'SOLICITANTE' in app.user.roles[0] or  'SUPER' in app.user.roles[0] %}
+
+					<td>
+						{% if solicitacao.tipo == 1 %}
+							Administrativo
+						{% else %}
+							Operacional
+						{% endif %}
+					</td>
+				{% endif %}
+				<td>{{ solicitacao.notaFiscal }}</td>
+				<td>R${{ solicitacao.valor|number_format(2, ',', '.') }}</td>
+				<td>{{ solicitacao.vencimento ? solicitacao.vencimento|date('d/m/Y') : '' }}</td>
+				{% if solicitacao.status == 1 %}
+					<td>Pendente</td>
+				{% endif %}
+				{% if solicitacao.status == 2 %}
+					<td>Recusado -
+						{{solicitacao.aprovador.nome|slice(0,7)}}</td>
+				{% endif %}
+				{% if solicitacao.status == 3 %}
+					<td>Pré-Aprovado -
+						{{solicitacao.aprovador.nome|slice(0,7)}}
+					</td>
+				</td>
+			{% endif %}
+			{% if solicitacao.status == 4 %}
+				<td>Recusado-
+					{{solicitacao.administrador.nome|slice(0,7)}}</td>
+			</td>
+		{% endif %}
+		{% if solicitacao.status == 5 %}
+			<td>Aprovado -
+				{{solicitacao.administrador.nome|slice(0,7)}}</td>
+		{% endif %}
+		<td>
+			<a href="{{ path('app_solicitacao_show', {'id': solicitacao.id}) }}">ver</a>
+			{% if '/solicitacao/'  in  app.request.pathinfo or '/financeiro/'  in  app.request.pathinfo  %}
+				|
+				<a href="{{ path('app_solicitacao_edit', {'id': solicitacao.id}) }}">editar</a>
+			{% endif %}
+		</td>
+	</tbody>
+</tr></tbody></td></tbody></tr></tr>{% else %}<tr><td colspan="11">Nenhuma solicitação foi encontrada.</td></tr>{% endfor %}</tbody></tbody></tr> </tbody></tbody></table><hr><div class="navigation">{{ knp_pagination_render(solicitacoes) }}</div></div></div></div><script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script><script>$(document).ready(function () {
+
+$("#data").mask("99/99/9999-99/99/9999")
+});</script>{% endblock %}

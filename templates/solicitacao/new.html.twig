@@ -1,0 +1,76 @@
+{# templates/login/index.html.twig #}
+{% extends 'admin.html.twig' %}
+
+{% block heading %}Perfil
+{% endblock %}
+
+{% block body %}
+	<div class="row">
+		<div class="col-xl-12 col-lg-12">
+			<div class="card">
+				<div class="card-header">
+					<h4 class="card-title">Nova solicitação</h4>
+				</div>
+				<div class="card-body">
+					<div class="basic-form">
+						<form method="post" enctype="multipart/form-data">
+							<div class="form-row">
+								{{ include('solicitacao/_form.html.twig') }}
+								<a href="{{ path('app_solicitacao_index') }}" class="btn">Voltar</a>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
+	<script src="{{ asset('js/jquery.maskMoney.min.js') }}"></script>
+
+	<script>
+		$(document).ready(function ($) {
+
+if (!localStorage.values) {
+var values = {
+'empresa': 0,
+'tipo': 0
+};
+localStorage.setItem('values', JSON.stringify(values));
+} else {
+var storedValues = JSON.parse(localStorage.values);
+
+var values = {
+'empresa': storedValues.empresa,
+'tipo': storedValues.tipo
+};
+
+$("#solicitacao_empresa").on('change', () => {
+if ($("#solicitacao_empresa option:selected").text() == 'Assessoria') {
+values.empresa = 0;
+localStorage.setItem('values', JSON.stringify(values));
+} else {
+values.empresa = 1;
+localStorage.setItem('values', JSON.stringify(values));
+}
+});
+
+$("#solicitacao_tipo").on('change', () => {
+if ($("#solicitacao_tipo option:selected").text() == 'Administrativo') {
+values.tipo = 0;
+localStorage.setItem('values', JSON.stringify(values));
+} else {
+values.tipo = 1;
+localStorage.setItem('values', JSON.stringify(values));
+}
+})
+
+
+$("#solicitacao_empresa").prop("selectedIndex", storedValues.empresa);
+$("#solicitacao_tipo").prop("selectedIndex", storedValues.tipo);
+
+} $("#solicitacao_valor").maskMoney({prefix: "R$:", decimal: ",", thousands: "."});
+});
+	</script>
+{% endblock %}

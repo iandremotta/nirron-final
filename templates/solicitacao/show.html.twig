@@ -1,0 +1,165 @@
+{% extends 'admin.html.twig' %}
+
+{% block heading %}Perfil
+{% endblock %}
+
+{% block body %}
+
+	{% if 
+	'APROVADOR_ADMINISTRATIVO' in app.user.roles[0] 
+	and solicitacao.tipo == 1 
+	and solicitacao.status == 1 
+	or 'APROVADOR_OPERACIONAL' in app.user.roles[0] 
+	and solicitacao.tipo == 2 
+	and solicitacao.status == 1 
+	or 'ADMINISTRADOR_ASSESSORIA' in app.user.roles[0]
+	and solicitacao.empresa == 'assessoria'
+	and solicitacao.status == 3
+	or 'ADMINISTRADOR_LOGISTICA' in app.user.roles[0]
+	and solicitacao.empresa == 'logistica' 
+	and solicitacao.status == 3
+	or 'SUPER' in app.user.roles[0]
+	and solicitacao.status == 3
+	 %}
+		{% for message in app.flashes('error') %}
+			<div class="alert alert-primary">
+				{{ message }}
+			</div>
+		{% endfor %}
+		<div class="d-flex justify-content-end">
+			<form method="post" action="{{ path('app_solicitacao_aprovar', {'id': solicitacao.id}) }}" onsubmit="return confirm('Você tem certeza que deseja aprovar essa solicitação?');">
+				<input type="hidden" name="_token" value="{{ csrf_token('aprovar' ~ solicitacao.id) }}">
+				<button class="btn btn-default" style="color:#ac8529">Aprovar</button>
+				{# <button class="btn" style="color:#EE3232">Aprovar</button> #}
+			</form>
+			<a href="javascript:void(0)" class="btn btn-default" style="color:#ac8529" data-toggle="modal" data-target="#addOrderModalside">Recusar</a>
+		</div>
+	{% endif %}
+
+	{% if solicitacao.recusador != null %}
+		<div class="row">
+			<div class="col-xl-12 col-lg-12">
+				<div class="card">
+					<div class="card-header">
+						<h4 class="card-title text-danger">Recusado -
+							{{solicitacao.recusador.nome }}
+						</h4>
+					</div>
+					<div class="card-body">
+						<div class="basic-form">
+							<div class="form-row">
+								<div class="form-group col-md-12">
+									<label>Justificativa</label>
+									<textarea class="form-control" disabled>{{solicitacao.recusa}}</textarea>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	{% endif %}
+
+
+	<div class="row">
+		<div class="col-xl-12 col-lg-12">
+			<div class="card">
+				<div class="card-header">
+					<h4 class="card-title">Solicitação
+						{% if solicitacao.status == 1 %}
+							<td>Pendente</td>
+						{% endif %}
+						{% if solicitacao.status == 2 %}
+							<td>Recusada</td>
+						{% endif %}
+						{% if solicitacao.status == 3 %}
+							<td>Pré-Aprovado</td>
+						{% endif %}
+						{% if solicitacao.status == 4 %}
+							<td>Recusada</td>
+						{% endif %}
+						{% if solicitacao.status == 5 %}
+							<td>Aprovada</td>
+						{% endif %}-
+						{{solicitacao.id}}</h4>
+				</div>
+				<div class="card-body">
+					<div class="basic-form">
+						<div class="form-row">
+							<div class="form-group col-md-6">
+								<label>Título</label>
+								<input placeholder={{solicitacao.titulo}} class="form-control" disabled>
+							</div>
+							<div class="form-group col-md-6">
+								<label>Empresa</label>
+								<input placeholder={{solicitacao.empresa}} class="form-control" disabled>
+							</div>
+							<div class="form-group col-md-6">
+								<label>Vencimento</label>
+								<input placeholder={{solicitacao.vencimento|date('d/m/Y')}} class="form-control" disabled>
+							</div>
+							<div class="form-group col-md-6">
+								<label>Nota Fiscal</label>
+								<input placeholder="{{solicitacao.notaFiscal}}" class="form-control" disabled>
+							</div>
+							<div class="form-group col-md-6">
+								<label>Valor</label>
+								<input placeholder="R${{solicitacao.valor|number_format(2, ',', '.') }}" class="form-control" disabled>
+							</div>
+							<div class="form-group col-md-6">
+								<label>Solicitado</label>
+								<input placeholder={{solicitacao.createdAt|date('d/m/Y H:m:s')}} class="form-control" disabled>
+							</div>
+							<div class="form-group col-md-12">
+								<label>Justificativa</label>
+								<textarea class="form-control" disabled>{{solicitacao.justificativa|raw}}</textarea>
+							</div>
+							{% if solicitacao.status > 2 %}
+								<div class="form-group col-md-6">
+									<label>Aprovador</label>
+									<input placeholder="{{solicitacao.aprovador != null ? solicitacao.aprovador.nome : 'Pendente'}}" class="form-control" disabled>
+								</div>
+								<div class="form-group col-md-6">
+									<label>Administrador</label>
+									<input placeholder="{{solicitacao.administrador != null ? solicitacao.administrador.nome : 'Pendente'}}" class="form-control" disabled>
+								</div>
+							{% endif %}
+						</div>
+						<a href="{{ path('app_solicitacao_index') }}" class="btn btn-default">Voltar</a>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="">
+		<embed
+		src="{{ vich_uploader_asset(solicitacao) }}" width="100%" height="750px" type="application/pdf">
+	{# <img alt="{{ solicitacao.titulo }}"> #}
+	</div>
+
+</div>{# Modal #}<div class="modal fade" id="addOrderModalside">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Recusa</h5>
+				<button type="button" class="close" data-dismiss="modal">
+					<span>&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="form-group">
+					<form method="POST" action="{{ path('app_solicitacao_recusar', {'id': solicitacao.id}) }}" onsubmit="return confirm('Você tem certeza que deseja recusar essa solicitação?');">
+						<label class="text-black font-w500">Motivo</label>
+						<textarea class="form-control" id="recusa" name="recusa" placeholder="Motivo da recusa" rows=" 4" cols=" 50"></textarea>
+					</div>
+					<div class="form-group">
+						<input type="hidden" name="_token" value="{{ csrf_token('recusar' ~ solicitacao.id) }}">
+						<button type="submit" class="btn btn-default" style="color:#ac8529">Recusar</button>
+						{# <button class="btn" style="color:#EE3232">Aprovar</button> #}
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
