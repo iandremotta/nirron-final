@@ -14,21 +14,36 @@ class Configuracoes
     private ?int $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $path = null;
+    private ?string $pathAssessoria = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $pathLogistica = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getPath(): ?string
+    public function getPathAssessoria(): ?string
     {
-        return $this->path;
+        return $this->pathAssessoria;
     }
 
-    public function setPath(?string $path): self
+    public function setPathAssessoria(?string $pathAssessoria): self
     {
-        $this->path = $path;
+        $this->pathAssessoria = $pathAssessoria;
+
+        return $this;
+    }
+
+    public function getPathLogistica(): ?string
+    {
+        return $this->pathLogistica;
+    }
+
+    public function setPathLogistica(?string $pathLogistica): self
+    {
+        $this->pathLogistica = $pathLogistica;
 
         return $this;
     }

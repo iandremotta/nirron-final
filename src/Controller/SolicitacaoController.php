@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Solicitacao;
 use App\Form\SolicitacaoType;
+use App\Entity\User;
 use App\Repository\ConfiguracoesRepository;
 use App\Repository\SolicitacaoRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,6 +17,7 @@ use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Path;
 use setasign\Fpdi\Fpdi;
+use App\Service\Watermark;
 
 #[Route('/solicitacao')]
 class SolicitacaoController extends AbstractController
@@ -32,7 +34,7 @@ class SolicitacaoController extends AbstractController
     }
 
     #[Route('/new', name: 'app_solicitacao_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, SolicitacaoRepository $solicitacaoRepository, FileUploader $fileUploader): Response
+    public function new(Request $request, SolicitacaoRepository $solicitacaoRepository, FileUploader $fileUploader, Watermark $watermark): Response
     {
         $solicitacao = new Solicitacao();
         $form = $this->createForm(SolicitacaoType::class, $solicitacao);
@@ -44,6 +46,10 @@ class SolicitacaoController extends AbstractController
             $valor = str_replace(',', '.', $valor);
             $solicitacao->setValor($valor);
             $solicitacaoRepository->add($solicitacao, true, $this->getuser());
+            if (in_array(User::ADMINISTRADOR_ASSESSORIA, $this->getUser()->getRoles()) || in_array(User::ADMINISTRADOR_LOGISTICA, $this->getUser()->getRoles()) ||    in_array(User::SUPER_USUARIO, $this->getUser()->getRoles())) {
+                $watermark->addWatermark($solicitacao, $this->getParameter('kernel.project_dir'), $this->getUser());
+            }
+
             $this->addFlash(
                 'success',
                 'Solicitação adicionada com sucesso.'
@@ -87,7 +93,7 @@ class SolicitacaoController extends AbstractController
     }
 
     #[Route('/aprovar/{id}', name: 'app_solicitacao_aprovar', methods: ['POST'])]
-    public function aprovar(Request $request, Solicitacao $solicitacao, ConfiguracoesRepository $configuracoesRepository, SolicitacaoRepository $solicitacaoRepository): Response
+    public function aprovar(Request $request, Solicitacao $solicitacao, ConfiguracoesRepository $configuracoesRepository, SolicitacaoRepository $solicitacaoRepository, Watermark $watermark): Response
     {
         if ($this->isCsrfTokenValid('aprovar' . $solicitacao->getId(), $request->request->get('_token'))) {
             if (in_array('ROLE_APROVADOR_ADMINISTRATIVO', $this->getUser()->getRoles()) || in_array('ROLE_APROVADOR_OPERACIONAL', $this->getUser()->getRoles())) {
@@ -103,73 +109,8 @@ class SolicitacaoController extends AbstractController
             }
 
             if (in_array('ROLE_ADMINISTRADOR_ASSESSORIA', $this->getUser()->getRoles()) || in_array('ROLE_ADMINISTRADOR_LOGISTICA', $this->getUser()->getRoles()) || in_array('ROLE_SUPER', $this->getUser()->getRoles())) {
-                $configuracoes = $configuracoesRepository->findLastInserted();
-                if ($configuracoes == null || $configuracoes->getPath() == "") {
-                    $this->addFlash(
-                        'error',
-                        'Caminho não encontrado, solicite ao SUPER a configuração.'
-                    );
-                    return $this->redirectToRoute('app_solicitacao_show', ['id' => $solicitacao->getId()], Response::HTTP_SEE_OTHER);
-                }
 
-                $pdf = new Fpdi();
-                $file = $this->getParameter('kernel.project_dir') . '\public\temp\products\\' . $solicitacao->getImageName();
-                $solicitacao->setStatus(Solicitacao::STATUS_ADMINISTRADOR_OK);
-                $solicitacao->setUpdatedAt(new \DateTimeImmutable('now'));
-                $solicitacao->setAdministrador($this->getUser());
-                $solicitacaoRepository->update($solicitacao, true);
-                if (file_exists($file)) {
-                    $pagecount = $pdf->setSourceFile($file);
-                } else {
-                    die('Source PDF not found!');
-                }
-
-                // Add watermark image to PDF pages 
-                for ($i = 1; $i <= $pagecount; $i++) {
-                    $tpl = $pdf->importPage($i);
-                    $size = $pdf->getTemplateSize($tpl);
-                    $pdf->addPage();
-                    $pdf->useTemplate($tpl, 1, 1, $size['width'], $size['height'], TRUE);
-                    $str = iconv('UTF-8', 'windows-1252', 'Aprovador: ' . $solicitacao->getAdministrador()->getNome());
-                    //Put the watermark 
-                    $pdf->SetFont('Helvetica', 'B', '16');
-                    $pdf->SetTextColor(255, 0, 0);
-                    $pdf->SetXY(($size['width'] - 100), ($size['height'] - 25));
-                    $pdf->Write(0, $str);
-                }
-
-                $pdf->Output('F', $file);
-                $filesystem = new Filesystem();
-                try {
-                    if (!$filesystem->exists($configuracoes->getPath())) {
-                        $filesystem->mkdir($configuracoes->getPath(), 0700);
-                    }
-                    $data = $solicitacao->getVencimento();
-                    $result = $data->format('Y-m-d');
-                    $result = explode('-', $result);
-
-                    if (!$filesystem->exists($configuracoes->getPath() . '\\' . $result[0])) {
-                        $filesystem->mkdir($configuracoes->getPath() . '\\' . $result[0], 0700);
-                    }
-
-                    if (!$filesystem->exists($configuracoes->getPath() . '\\' . $result[0] . '\\' . $result[1])) {
-                        $filesystem->mkdir($configuracoes->getPath() . '\\' . $result[0] . '\\'  . $result[1], 0700);
-                    }
-
-                    if (!$filesystem->exists($configuracoes->getPath() . '\\' . $result[0] . '\\'  . $result[1] . '\\'  . $result[2])) {
-                        $filesystem->mkdir($configuracoes->getPath() . '\\' . $result[0] . '\\'  . $result[1] . '\\'  . $result[2], 0700);
-                    }
-
-                    $filesystem->chmod($this->getParameter('kernel.project_dir') . '\public\temp\products\\', 0700, 0000, true);
-
-                    copy($this->getParameter('kernel.project_dir') . '\public\temp\products\\' . $solicitacao->getImageName(), $configuracoes->getPath() . '\\' . $result[0] . '\\'  . $result[1] . '\\'  . $result[2] . '\\' . $solicitacao->getImageName());
-                    // dd('C:\workspace\nirron\nirron\public\images\products' . $solicitacao->getImageName());
-
-
-                } catch (IOExceptionInterface $exception) {
-                    echo "An error occurred while creating your directory at " . $exception->getPath();
-                }
-
+                $watermark->addWatermark($solicitacao, $this->getParameter('kernel.project_dir'), $this->getUser());
                 $this->addFlash(
                     'success',
                     'Solicitação aprovada com sucesso.'
@@ -180,8 +121,6 @@ class SolicitacaoController extends AbstractController
                 return $this->redirectToRoute('app_administrador_logistica_pre_aprovados', [], Response::HTTP_SEE_OTHER);
             }
         }
-
-
         return $this->redirectToRoute('app_solicitacao_index', [], Response::HTTP_SEE_OTHER);
     }
 

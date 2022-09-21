@@ -5,17 +5,9 @@
 {% block body %}
 	<div class="form-row d-flex justify-content-between">
 		{{ knp_pagination_filter(users, {'u.nome': 'nome'} ) }}
-		<form action="{{path('app_configuracoes')}}" method="post" class="col-xl-6">
-			<div class="input-group mb-3">
-				<input value="{{ configuracoes != null ? configuracoes.path : ''}}" name="path" placeholder="" type="text" class="form-control">
-				<div class="input-group-append">
-					<button class="btn btn-primary" type="submit">
-						Path
-						{#{{ options.button }}{#}
-					</button>
-				</div>
-			</div>
-		</form>
+
+		<a href="javascript:void(0)" class="btn btn-default" style="color:#ac8529" data-toggle="modal" data-target="#addOrderModalside">Paths</a>
+
 
 		<a href="{{ path('app_user_new') }}" class="btn btn-default" style="color:#ac8529;">Adicionar novo
 		</a>
@@ -60,4 +52,44 @@
 			</div>
 		</div>
 	</div>
-</div>{% endblock %}
+</div>
+
+<div class="modal fade" id="addOrderModalside">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Paths</h5>
+				<button type="button" class="close" data-dismiss="modal">
+					<span>&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="form-group">
+					<form action="{{path('app_configuracoes')}}" method="post" class="col-xl-12">
+						<div class="input-group mb-3">
+							<input value="{{ configuracoes != null ? configuracoes.pathAssessoria : ''}}" name="assessoria" placeholder="Path Assessoria" type="text" class="form-control">
+							<div class="input-group-append">
+								<button class="btn btn-primary" type="submit">
+									Assessoria
+									{#{{ options.button }}{#}
+								</button>
+							</div>
+						</div>
+					</form>
+					<form action="{{path('app_configuracoes')}}" method="post" class="col-xl-12">
+						<div class="input-group mb-3">
+							<input value="{{ configuracoes != null ? configuracoes.pathLogistica : ''}}" name="logistica" placeholder="Path logística" type="text" class="form-control">
+							<div class="input-group-append">
+								<button class="btn btn-primary" type="submit">
+									Logística
+									{#{{ options.button }}{#}
+								</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}

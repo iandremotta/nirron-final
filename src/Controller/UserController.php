@@ -136,23 +136,46 @@ class UserController extends AbstractController
     public function configuracoes(Request $request, ConfiguracoesRepository $configuracoesRepository): Response
     {
         // $configuracoes = $configuracoesRepository->findBy(array(), array('id' => 'DESC'), 1, 0);
-        $configuracoes = $configuracoesRepository->findLastInserted();
-        if ($configuracoes != null) {
-            $configuracoes->setPath($request->get('path'));
+        if ($request->get('assessoria') != null) {
+            $configuracoes = $configuracoesRepository->findLastInserted();
+            if ($configuracoes != null) {
+                $configuracoes->setPathAssessoria($request->get('assessoria'));
+                $configuracoesRepository->add($configuracoes, true);
+                $this->addFlash(
+                    'success',
+                    'Caminho adicionado com sucesso.'
+                );
+                return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
+            }
+            $configuracoes = new Configuracoes();
+            $configuracoes->setPathAssessoria($request->get('assessoria'));
             $configuracoesRepository->add($configuracoes, true);
             $this->addFlash(
                 'success',
                 'Caminho adicionado com sucesso.'
             );
-            return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
         }
-        $configuracoes = new Configuracoes();
-        $configuracoes->setPath($request->get('path'));
-        $configuracoesRepository->add($configuracoes, true);
-        $this->addFlash(
-            'success',
-            'Caminho adicionado com sucesso.'
-        );
+
+        if ($request->get('logistica') != null) {
+            $configuracoes = $configuracoesRepository->findLastInserted();
+            if ($configuracoes != null) {
+                $configuracoes->setPathLogistica($request->get('logistica'));
+                $configuracoesRepository->add($configuracoes, true);
+                $this->addFlash(
+                    'success',
+                    'Caminho adicionado com sucesso.'
+                );
+                return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
+            }
+            $configuracoes = new Configuracoes();
+            $configuracoes->setPathLogistica($request->get('logistica'));
+            $configuracoesRepository->add($configuracoes, true);
+            $this->addFlash(
+                'success',
+                'Caminho adicionado com sucesso.'
+            );
+        }
+
         return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
     }
 }

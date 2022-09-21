@@ -5,7 +5,7 @@
 {% block body %}
 	<div class="form-row d-flex justify-content-between">
 		{{ knp_pagination_filter(solicitacoes, {'u.titulo': 'titulo'} ) }}
-		{% if 'SOLICITANTE' in app.user.roles[0] or 'APROVADOR' in app.user.roles[0] %}
+		{% if 'APROVADOR' in app.user.roles[0] or 'SOLICITANTE' in app.user.roles[0] or 'SUPER' in app.user.roles[0] or 'ADMINISTRADOR' in app.user.roles[0]%}
 			<div class="d-flex justify-content-end">
 				<a href="{{ path('app_solicitacao_new') }}" class="btn btn-default" style="color:#ac8529;">Adicionar novo
 				</a>

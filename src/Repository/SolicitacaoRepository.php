@@ -29,6 +29,8 @@ class SolicitacaoRepository extends ServiceEntityRepository
             $entity->setStatus(Solicitacao::STATUS_PENDENTE);
         } else if (in_array(User::APROVADOR_ADMINISTRATIVO, $user->getRoles()) || in_array(User::APROVADOR_OPERACIONAL, $user->getRoles())) {
             $entity->setStatus(Solicitacao::STATUS_APROVADOR_OK);
+        } else if (in_array(User::ADMINISTRADOR_ASSESSORIA, $user->getRoles()) || in_array(User::ADMINISTRADOR_LOGISTICA, $user->getRoles()) ||    in_array(User::SUPER_USUARIO, $user->getRoles())) {
+            $entity->setStatus(Solicitacao::STATUS_ADMINISTRADOR_OK);
         }
 
         $entity->setCreatedAt(new \DateTime('now'));
