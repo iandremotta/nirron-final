@@ -133,9 +133,16 @@
 		</div>
 	</div>
 	<div class="">
-		<embed
-		src="{{ vich_uploader_asset(solicitacao) }}" width="100%" height="750px" type="application/pdf">
-	{# <img alt="{{ solicitacao.titulo }}"> #}
+		{% if solicitacao.status != 5  %}
+			<embed src="{{ vich_uploader_asset(solicitacao) }}" width="100%" height="750px" type="application/pdf">
+		{% else %}
+			<embed src="{{'/converted/' ~ solicitacao.imageName()}}" width="80%" height="750px" type="application/pdf">
+			<iframe id="inlineFrameExample" title="Inline Frame Example" width="300" height="200" src="{{'/converted/' ~ solicitacao.imageName()}}"></iframe>
+
+			{# <embed src="./" width="100%" height="750px" type="application/pdf"> #}
+		{% endif %}
+
+		{# <img alt="{{ solicitacao.titulo }}"> #}
 	</div>
 
 </div>{# Modal #}<div class="modal fade" id="addOrderModalside">

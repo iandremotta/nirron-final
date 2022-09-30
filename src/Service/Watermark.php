@@ -48,6 +48,8 @@ class Watermark
         $solicitacao->setAdministrador($user);
         $this->solicitacaoRepository->update($solicitacao, true);
         if (file_exists($file)) {
+            $result = shell_exec('"C:\Program Files\gs\\gs10.00.0\bin\gswin64c" -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dNOPAUSE -dBATCH -sOutputFile="C:\inetpub\wwwroot\nirron\public\converted\\' . $solicitacao->getImageName() . '" "' . $file . '" 2>&1');
+            $file = $route . '\public\converted\\' . $solicitacao->getImageName();
             $pagecount = $pdf->setSourceFile($file);
         } else {
             die('Source PDF not found!');
@@ -90,8 +92,7 @@ class Watermark
             }
 
             $filesystem->chmod($route . '\public\temp\products\\', 0700, 0000, true);
-
-            copy($route . '\public\temp\products\\' . $solicitacao->getImageName(), $path  . '\\' . $result[0] . '\\'  . $result[1] . '\\'  . $result[2] . '\\' . $solicitacao->getImageName());
+            copy($route . '\public\converted\\' . $solicitacao->getImageName(), $path  . '\\' . $result[0] . '\\'  . $result[1] . '\\'  . $result[2] . '\\' . $solicitacao->getImageName());
             // dd('C:\workspace\nirron\nirron\public\images\products' . $solicitacao->getImageName());
 
 

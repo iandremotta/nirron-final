@@ -79,6 +79,8 @@ class SolicitacaoType extends AbstractType
                 'allow_delete' => false,
                 'download_link' => false,
                 'label' => "Boleto",
+                'attr' => ['accept' => 'application/pdf'],
+
             ]);
     }
 
