@@ -110,4 +110,52 @@ class AprovadorController extends AbstractController
             'nav_active' => "Solicitação"
         ]);
     }
+
+    #[Route('/assessoria/pendentes', name: 'app_aprovador_administrativo_assessoria_pendentes', methods: ['GET'])]
+    public function assessoriaPendentes(SolicitacaoRepository $solicitacaoRepository, Request $request, PaginatorInterface $paginator): Response
+    {
+
+        $solicitacoes = $solicitacaoRepository->findAllByEmpresaStatusTipo(Solicitacao::EMPRESA_ASSESSORIA, Solicitacao::STATUS_PENDENTE, Solicitacao::TIPO_ADMINISTRATIVO);
+        $pagination = $paginator->paginate($solicitacoes, $request->query->getInt('page', 1), 10);
+        return $this->render('aprovador/index_assessoria.html.twig', [
+            'solicitacoes' => $pagination,
+            'nav_active' => "Solicitação"
+        ]);
+    }
+
+    #[Route('/assessoria/todos', name: 'app_aprovador_administrativo_assessoria_todos', methods: ['GET'])]
+    public function assessoriaTodos(SolicitacaoRepository $solicitacaoRepository, Request $request, PaginatorInterface $paginator): Response
+    {
+
+        $solicitacoes = $solicitacaoRepository->findAllByEmpresaTipo(Solicitacao::EMPRESA_ASSESSORIA, Solicitacao::TIPO_ADMINISTRATIVO);
+        $pagination = $paginator->paginate($solicitacoes, $request->query->getInt('page', 1), 10);
+        return $this->render('aprovador/index_assessoria.html.twig', [
+            'solicitacoes' => $pagination,
+            'nav_active' => "Solicitação"
+        ]);
+    }
+
+    #[Route('/logistica/pendentes', name: 'app_aprovador_administrativo_logistica_pendentes', methods: ['GET'])]
+    public function logisticaPendentes(SolicitacaoRepository $solicitacaoRepository, Request $request, PaginatorInterface $paginator): Response
+    {
+        $solicitacoes = $solicitacaoRepository->findAllByEmpresaStatusTipo(Solicitacao::EMPRESA_LOGISTICA, Solicitacao::STATUS_PENDENTE, Solicitacao::TIPO_ADMINISTRATIVO);
+
+        $pagination = $paginator->paginate($solicitacoes, $request->query->getInt('page', 1), 10);
+        return $this->render('aprovador/index_logistica.html.twig', [
+            'solicitacoes' => $pagination,
+            'nav_active' => "Solicitação"
+        ]);
+    }
+
+    #[Route('/logistica/todos', name: 'app_aprovador_administrativo_logistica_todos', methods: ['GET'])]
+    public function logisticaTodos(SolicitacaoRepository $solicitacaoRepository, Request $request, PaginatorInterface $paginator): Response
+    {
+        $solicitacoes = $solicitacaoRepository->findAllByEmpresaTipo(Solicitacao::EMPRESA_LOGISTICA, Solicitacao::TIPO_ADMINISTRATIVO);
+        // dd($solicitacoes);
+        $pagination = $paginator->paginate($solicitacoes, $request->query->getInt('page', 1), 10);
+        return $this->render('aprovador/index_logistica.html.twig', [
+            'solicitacoes' => $pagination,
+            'nav_active' => "Solicitação"
+        ]);
+    }
 }

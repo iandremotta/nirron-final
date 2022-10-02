@@ -120,6 +120,31 @@ class SolicitacaoRepository extends ServiceEntityRepository
             ->getQuery();
     }
 
+    public function findAllByEmpresaTipo($empresa, $tipo)
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.empresa = :empresa')
+            ->andWhere('u.tipo = :tipo')
+            ->setParameter('empresa', $empresa)
+            ->setParameter('tipo', $tipo)
+            ->orderBy('u.vencimento', 'ASC')
+            ->getQuery();
+    }
+
+    public function findAllByEmpresaStatusTipo($empresa, $status, $tipo)
+    {
+
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.empresa = :empresa')
+            ->andWhere('u.status = :status')
+            ->andWhere('u.tipo = :tipo')
+            ->setParameter('empresa', $empresa)
+            ->setParameter('status', $status)
+            ->setParameter('tipo', $tipo)
+            ->orderBy('u.vencimento', 'ASC')
+            ->getQuery();
+    }
+
     public function findAllByEmpresaStatusHoje($empresa, $status)
     {
         $hoje = date('Y-m-d 00:00:00');

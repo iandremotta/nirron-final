@@ -56,7 +56,7 @@ security:
     # Solicitacao
     - { path: ^/solicitacao/, roles: [IS_AUTHENTICATED_FULLY] }
       # User
-    - { path: ^/user/, roles: [IS_AUTHENTICATED_FULLY] }
+    - { path: ^/user/, roles: [ROLE_SUPER] }
 
 when@test:
   security:

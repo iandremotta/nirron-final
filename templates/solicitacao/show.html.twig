@@ -158,7 +158,7 @@
 				<div class="form-group">
 					<form method="POST" action="{{ path('app_solicitacao_recusar', {'id': solicitacao.id}) }}" onsubmit="return confirm('Você tem certeza que deseja recusar essa solicitação?');">
 						<label class="text-black font-w500">Motivo</label>
-						<textarea class="form-control" id="recusa" name="recusa" placeholder="Motivo da recusa" rows=" 4" cols=" 50"></textarea>
+						<textarea class="form-control" id="recusa" name="recusa" placeholder="Motivo da recusa" rows=" 4" cols=" 50" required></textarea>
 					</div>
 					<div class="form-group">
 						<input type="hidden" name="_token" value="{{ csrf_token('recusar' ~ solicitacao.id) }}">

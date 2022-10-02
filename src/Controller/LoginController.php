@@ -39,7 +39,7 @@ class LoginController extends AbstractController
         }
 
         if ($this->isGranted('ROLE_APROVADOR_ADMINISTRATIVO')) {
-            return $this->redirectToRoute("app_aprovador_administrativo_pendentes");
+            return $this->redirectToRoute("app_aprovador_administrativo_assessoria_pendentes");
         }
 
         if ($this->isGranted('ROLE_APROVADOR_OPERACIONAL')) {

@@ -105,6 +105,9 @@ class SolicitacaoController extends AbstractController
                     'success',
                     'Solicitação aprovada com sucesso.'
                 );
+                if ($solicitacao->getEmpresa() == Solicitacao::EMPRESA_LOGISTICA && in_array('ROLE_APROVADOR_ADMINISTRATIVO', $this->getUser()->getRoles())) {
+                    return $this->redirectToRoute('app_aprovador_administrativo_logistica_pendentes', [], Response::HTTP_SEE_OTHER);
+                }
                 return $this->redirectToRoute('app_login_success', [], Response::HTTP_SEE_OTHER);
             }
 
@@ -135,20 +138,14 @@ class SolicitacaoController extends AbstractController
                 $solicitacao->setStatus(Solicitacao::STATUS_APROVADOR_RECUSADO);
                 $solicitacao->setRecusa($request->request->get('recusa'));
                 $solicitacaoRepository->update($solicitacao, true);
-                if (in_array('ROLE_APROVADOR_ADMINISTRATIVO', $this->getUser()->getRoles())) {
-                    $this->addFlash(
-                        'success',
-                        'Solicitação recusada com sucesso.'
-                    );
-                    return $this->redirectToRoute('app_aprovador_administrativo_pendentes', [], Response::HTTP_SEE_OTHER);
+                $this->addFlash(
+                    'success',
+                    'Solicitação recusada com sucesso.'
+                );
+                if ($solicitacao->getEmpresa() == Solicitacao::EMPRESA_LOGISTICA && in_array('ROLE_APROVADOR_ADMINISTRATIVO', $this->getUser()->getRoles())) {
+                    return $this->redirectToRoute('app_aprovador_administrativo_logistica_pendentes', [], Response::HTTP_SEE_OTHER);
                 }
-                if (in_array('ROLE_APROVADOR_OPERACIONAL', $this->getUser()->getRoles())) {
-                    $this->addFlash(
-                        'success',
-                        'Solicitação recusada com sucesso.'
-                    );
-                    return $this->redirectToRoute('app_aprovador_operacional_pendentes', [], Response::HTTP_SEE_OTHER);
-                }
+                return $this->redirectToRoute('app_login_success', [], Response::HTTP_SEE_OTHER);
             }
             if (in_array('ROLE_ADMINISTRADOR_ASSESSORIA', $this->getUser()->getRoles()) || in_array('ROLE_ADMINISTRADOR_LOGISTICA', $this->getUser()->getRoles()) || in_array('ROLE_SUPER', $this->getUser()->getRoles())) {
                 $solicitacao->setStatus(Solicitacao::STATUS_ADMINISTRADOR_RECUSADO);
@@ -156,20 +153,14 @@ class SolicitacaoController extends AbstractController
                 $solicitacao->setRecusador($this->getUser());
                 $solicitacao->setRecusa($request->request->get('recusa'));
                 $solicitacaoRepository->update($solicitacao, true);
-                if ($solicitacao->getEmpresa() == 'assessoria') {
-                    $this->addFlash(
-                        'success',
-                        'Solicitação recusada com sucesso.'
-                    );
+                $this->addFlash(
+                    'success',
+                    'Solicitação recusada com sucesso.'
+                );
+                if ($solicitacao->getEmpresa() == Solicitacao::EMPRESA_ASSESSORIA) {
                     return $this->redirectToRoute('app_administrador_assessoria_pre_aprovados', [], Response::HTTP_SEE_OTHER);
                 }
-                if ($solicitacao->getEmpresa() == 'logistica') {
-                    $this->addFlash(
-                        'success',
-                        'Solicitação recusada com sucesso.'
-                    );
-                    return $this->redirectToRoute('app_administrador_logistica_pre_aprovados', [], Response::HTTP_SEE_OTHER);
-                }
+                return $this->redirectToRoute('app_administrador_logistica_pre_aprovados', [], Response::HTTP_SEE_OTHER);
             }
         }
 
